@@ -1,0 +1,50 @@
+//-----------------------------------------------callback SD DATA-----------------------------
+// unsigned int nCID		通道ID号
+//char *pDataBuf, int nSize 音频视频数据长度
+//short nRes				  分辨率  参考enumVGAMode定义
+//short nEnType				编码类型  1:MPEG4 2:M_JPEG  4,5,6 :H264 (4,5，6都是H264); 音频类型 G729—66 G711-130 G726-258 PCM-514
+//     (注意：如果是音频数据 nRes==0, nfile==0, nFreadType==0)
+//short nfilp					翻转类型  1 上下翻转 2 左右翻转 3 上下左右翻转
+//short nFreamType		帧类型 1为 I帧，其他为P帧
+//void *userData  
+typedef void (*HKMIEDSDCALLBACK)(void *userData, unsigned int  nCID,char *pDataBuf, int nSize,short nRes,short nEnType,short nfilp,short nFreamType );
+//初始化视频数据回调
+EXPORTDECL_API int hk_InitSdData(void *userData, HKMIEDSDCALLBACK sdCallBack);
+
+//--------------------------------------------------------------SD--------------------------------------------
+//回调函数
+typedef void (*HKCALLBACKSDFILE)(void *userData,int nCmd, char *cBuf, int iCount );
+//初始化SD File
+EXPORTDECL_API int InitSdFile(void *userData, HKCALLBACKSDFILE SdFileCallBack );
+
+//局域网读取设备SD卡录像文件目录
+//int currentPage 当前第几页 从1开始
+//int pageSize    第页多少条(一次获取多少条记录)
+//返回-1失败
+EXPORTDECL_API int DoLanReadSdData( int hkid, int currentPage, int pageSize, unsigned int ulParam );
+//回调函数:
+//void (*HKCALLBACKSDFILE)(void *userData,int nCmd, char *cBuf, int iCount );
+//         userData   304;   buf(name=..;nid=..;size=..;)   count--(等于0没有) 
+
+//局域网下载SD卡文件
+//char Callid[40];  下载文件ID，关闭时用到 用局域视频关闭接口（hk_DoLanClose）
+//char *cDowFile; 下载的文件名
+//int ulParam; 预留
+EXPORTDECL_API int DoLanDowSdData( char Callid[40], int hkid, char * cDowFile, int ulParam );
+
+
+//互联网获取SD卡录像文件目录
+//int currentPage 当前第几页 从1开始
+//int pageSize    第页多少条(一次获取多少条记录)
+//返回-1失败
+EXPORTDECL_API int DoMonSDReadData( const char *devid, int currentPage, int pageSize, unsigned int lParam );
+//回调函数:
+//void (*HKCALLBACKSDFILE)(void *userData,int nCmd, char *cBuf, int iCount );
+//         userData   304;   buf(name=..;nid=..;size=..;)   count--(等于0没有) 
+
+//char Callid[40];  下载文件ID，关闭时用到 用互联网视频关闭接口
+//char *devid;   设备id
+//char *cDowFile;要下载文件名称
+//int ulParam; 预留
+//返回-1失败
+EXPORTDECL_API int DoMonDowSdData( char Callid[40],char *devid, char *cDowFile,  int ulParam );
